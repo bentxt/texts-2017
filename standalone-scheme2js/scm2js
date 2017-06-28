@@ -1,0 +1,24 @@
+#!/bin/sh
+
+script=$1
+[ -n "$script" ] || { echo "usage: script.scm"; exit 1 ; }
+
+scriptbase=$(basename $script)
+scriptdir=$(dirname $script)
+
+scriptname=${scriptbase%.*}
+
+
+out= app=
+if [ "$scriptdir" = "." ] ; then
+   out="${scriptname}.js"
+   app="${scriptname}-app.js"
+else
+   out="$scriptdir/${scriptname}.js"
+   app="$scriptdir/${scriptname}-app.js"
+fi
+
+scheme2js -o "$out"  "$script"
+cat runtime-cli.js "$out"  > $app
+
+nodejs $app
